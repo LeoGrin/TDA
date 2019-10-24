@@ -62,6 +62,7 @@ class ClassicFiltrations:
         Input: tuple from the vertices of the simplex
         Output: set from the subsimplices, i.e. set of tuple of vertices. Includes the input simplex.
         """
+        print()
         return set(
             itertools.chain(*[itertools.combinations(simplex_vert, dim) for dim in range(1, len(simplex_vert) + 1)]))
 
@@ -70,12 +71,19 @@ class ClassicFiltrations:
         Input: set from the simplices, i.e. set of tuples of vertices
         Output: list from the simplices sorted in crescent order for the dimension and for the name
         """
+
         all_simplices = simplices_set.copy()
+
+
         for simplex_vert in simplices_set:
             new_simplices = self.subsimplices_from_simplex(simplex_vert)
             for new_simplex in new_simplices:
                 all_simplices.add(new_simplex)
+
+        all_simplices = [tuple(sorted(t)) for t in all_simplices]
+        all_simplices = set(all_simplices)
         all_simplices = sorted(list(all_simplices), key=lambda x: (len(x), x[0]))
+
         return all_simplices
 
     def from_simplices_to_filtration(self, sorted_simplices_list):

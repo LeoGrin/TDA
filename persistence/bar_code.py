@@ -3,10 +3,15 @@ class BoundaryMatrix:
     def __init__(self, filtration):
         """compute the boundaries"""
         self.filtration = filtration
+        # We define low(i) = the maximal non-zero element for the i-th simplex
+
+        # dic_low[k] = list containing all the simplices i whose low(i) is in the k-th row, i.e. corresponds to the k-th simplex
+        # dic_boundaries[i] = list containing all the non-zero boundary simplices from the i-th simplex
+        # dic_coord[(i, j)] = 1 if Bi,j with B boundary matrix
         dic_low, dic_boundaries, dic_coord = {}, {}, {}
         for i in range(len(filtration.simplex_list)):
-            dic_boundaries[i] = []  # initialization
-            dic_low[i] = []
+            dic_boundaries[i] = set()  # initialization
+            dic_low[i] = set()
 
         for simplex in filtration.simplex_list:
 
@@ -16,10 +21,8 @@ class BoundaryMatrix:
             if len(boundaries_id) > 0:
                 dic_boundaries[simplex_coord] = boundaries_id
                 low_i = max(boundaries_id)
-                # Check if they're already another simplex with the same low(i)
-                dic_low[low_i] = dic_low[low_i] + [simplex_coord] if (low_i in dic_low.keys()) else [simplex_coord]
-                for b_id in boundaries_id:
-                    dic_coord[(simplex_coord, b_id)] = 1
+                dic_low[low_i].add(simplex_coord)
+
 
         self.dic_boundaries = dic_boundaries
         self.dic_coord = dic_coord
@@ -29,12 +32,12 @@ class BoundaryMatrix:
 
     def compute_boundary(self, simplex):
         """return the identifiers of the boundaries of the simplex"""
-        boundaries_id = []
+        boundaries_id = set()
         for i in range(simplex.dim + 1):
             new_vert = list(simplex.vert)
             del new_vert[i]
             if len(new_vert) > 0:
-                boundaries_id.append(self.filtration.dic_simplex[tuple(sorted(new_vert))])  # new_vert must be sorted because we compare tuple (it's actually already sorted but we sort it for code clarity)
+                boundaries_id.add(self.filtration.dic_simplex[tuple(sorted(new_vert))])  # new_vert must be sorted because we compare tuple (it's actually already sorted but we sort it for code clarity)
         return boundaries_id
 
     def sum_boundaries(self, col1, col2, boundaries1, boundaries2):
@@ -52,42 +55,31 @@ class BoundaryMatrix:
     def gaussian_elim(self):
         print("beginning gaussian elimination")
         t = time.time()
-        pivots = []
         for i in reversed(range(0, len(self.dic_boundaries.keys()))):
-            if i in self.dic_low.keys():
+            if i in self.dic_low:
                 columns = sorted(self.dic_low[i])
-                if len(columns) > 0:  # if there are columns to kill
+                if columns:  # if there are columns to kill
+
                     pivot_column = columns[0]
-                    pivots.append(pivot_column)
                     for column in columns[1:]:
                         # sum in Z/2Z
-                        new_column = self.sum_boundaries(column, pivot_column, self.dic_boundaries[column], self.dic_boundaries[pivot_column])
-                        #update dic_coord
-                        for id_ in self.dic_boundaries[column]:
-                            self.dic_coord[(column, id_)] = None
-                        for id_ in new_column:
-                            self.dic_coord[(column, id_)] = 1
-                        # update dic_boundaries
-                        self.dic_boundaries[column] = new_column
+                        self.dic_boundaries[column].symmetric_difference_update(self.dic_boundaries[pivot_column])
                         #update dic_low
-                        if len(self.dic_boundaries[column]) > 0:
+                        if self.dic_boundaries[column]:
                             # update the pivot
                             new_pivot = max(self.dic_boundaries[column])
-                            if new_pivot in self.dic_low.keys():
-                                self.dic_low[new_pivot].append(column)
-                            else:
-                                self.dic_low[new_pivot] = [column]
+                            self.dic_low[new_pivot].add(column)
+
         print("gaussian elimination: Done !")
         print("took {} seconds".format(time.time() - t))
         self.gaussian_elim_done = True
-        return pivots
 
     def bar_codes(self, threshold=0.05):
         """compute the bar_code of a filtration (should be computed after gaussian_elim)"""
-        if not self.gaussian_elim_done:
-            self.gaussian_elim()
         print("beginning bar codes computing")
         t = time.time()
+        if not self.gaussian_elim_done:
+            self.gaussian_elim()
         bar_codes = {}
         bar_codes_list = []
         for i, s in enumerate(self.filtration.simplex_list):
@@ -114,8 +106,9 @@ class BoundaryMatrix:
 
         print("bar codes computing: Done !")
         print("took {} seconds".format(time.time() - t))
+        print("for {} simplex".format(len(self.filtration.simplex_list)))
 
-        return bar_codes_list
+        return bar_codes_list, time.time() - t, len(self.filtration.simplex_list)
 
 
 
