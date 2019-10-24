@@ -62,7 +62,6 @@ class ClassicFiltrations:
         Input: tuple from the vertices of the simplex
         Output: set from the subsimplices, i.e. set of tuple of vertices. Includes the input simplex.
         """
-        print()
         return set(
             itertools.chain(*[itertools.combinations(simplex_vert, dim) for dim in range(1, len(simplex_vert) + 1)]))
 
@@ -117,8 +116,8 @@ class ClassicFiltrations:
             all_filtrations.append(self.from_simplices_to_filtration(
                 self.all_simplices_from_top_simplices(self.subsimplices_from_simplex(self.top_simplex_d_ball(d)))))
 
-            # For the d-sphere
-            self.all_names.append("{}-sphere".format(d))
+            # For the (d-1)-sphere
+            self.all_names.append("{}-sphere".format(d-1))
             all_filtrations.append(self.from_simplices_to_filtration(
                 self.all_simplices_from_top_simplices(self.subsimplices_from_simplex(self.top_simplex_d_ball(d))))[
                                    :-1])  # We remove the (d+1) simplex

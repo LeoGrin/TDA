@@ -2,8 +2,8 @@
 0 0 B 
 0 0 C 
 0 0 D 
-1 1 A C 
 1 1 A D 
+1 1 A C 
 1 1 A B 
 1 1 B D 
 1 1 B C 

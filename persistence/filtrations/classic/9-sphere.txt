@@ -2044,4 +2044,3 @@
 9 9 A B C D E G H I J K 
 9 9 A B C D E F H I J K 
 9 9 B C D E F G H I J K 
-10 10 A B C D E F G H I J K 

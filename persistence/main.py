@@ -17,20 +17,25 @@ for name in classic_filtrations.all_names:
     print("computing " + name)
     filtration = Filtration("filtrations/classic/" + name + ".txt")
     bound_mat = BoundaryMatrix(filtration)
-    res = bound_mat.bar_codes(0.05)
+    res = bound_mat.bar_codes(0)
+    l_t.append(res[1])
+    l_p.append(res[2])
+
+for name in names:
+    print("computing " + name)
+    filtration = Filtration("filtrations/" + name + ".txt")
+    bound_mat = BoundaryMatrix(filtration)
+    if name is "filtration_B":
+        res = bound_mat.bar_codes(0.05)
+    else:
+        res = bound_mat.bar_codes(0)
     l_t.append(res[1])
     l_p.append(res[2])
 
 
 
 
-#x = np.log([ 10, 2047, 108161, 180347, 428643])
-#y = np.log([ 4.8160552978515625e-05, 0.00757503, 118, 335.5057, (52 * 60)])
 
-#x = np.log([ 108161, 180347, 428643])
-#y = np.log([ 118, 335.5057, (52 * 60)])
-print(l_p)
-print(l_t)
 x = np.log(l_p)
 y = np.log(l_t)
 
@@ -41,4 +46,7 @@ y_poly = [sum([coef[i] * elem ** i for i in range(deg+1)]) for elem in x]
 
 plt.scatter(x, y, marker="o", c="b")
 plt.plot(x, y_poly, c="r")
+plt.xlabel("log(n_simplex)")
+plt.ylabel("log(time)")
+plt.legend("pente = {}".format(coef[1]))
 plt.show()
