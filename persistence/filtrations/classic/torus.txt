@@ -1,0 +1,54 @@
+0 0 A 
+0 0 B 
+0 0 C 
+0 0 D 
+0 0 E 
+0 0 F 
+0 0 G 
+0 0 H 
+0 0 I 
+1 1 A B 
+1 1 A F 
+1 1 A D 
+1 1 B D 
+1 1 B E 
+1 1 B C 
+1 1 C F 
+1 1 C A 
+1 1 C E 
+1 1 D I 
+1 1 D G 
+1 1 D E 
+1 1 E H 
+1 1 E F 
+1 1 E G 
+1 1 F I 
+1 1 F H 
+1 1 F D 
+1 1 G H 
+1 1 G A 
+1 1 G C 
+1 1 H B 
+1 1 H I 
+1 1 H A 
+1 1 I B 
+1 1 I C 
+1 1 I G 
+2 2 A B D 
+2 2 A F D 
+2 2 B C E 
+2 2 B D E 
+2 2 C E F 
+2 2 C A F 
+2 2 D E G 
+2 2 D I G 
+2 2 E F H 
+2 2 E G H 
+2 2 F H I 
+2 2 F D I 
+2 2 G H A 
+2 2 G C A 
+2 2 H A B 
+2 2 H I B 
+2 2 I G C 
+2 2 I B C 
